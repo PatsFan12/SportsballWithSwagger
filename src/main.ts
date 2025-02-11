@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -19,6 +20,14 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
+
+  const config = new DocumentBuilder()
+    .setTitle('Players API')
+    .setDescription('API documentation for managing players')
+    .addBearerAuth()
+    .build();
+
+  SwaggerModule.setup('api', app, () => SwaggerModule.createDocument(app,config));
   
   await app.listen(3000);
 }
